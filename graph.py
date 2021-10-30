@@ -14,7 +14,7 @@ def calculate_adjancency_list(graph):
 
   return adjancency_list
 
-def add_vertex_to_path(vertex, path):
+def copy_path_and_add_vertex(vertex, path):
   new_path = path.copy()
   new_path.append(vertex)
 
@@ -23,11 +23,11 @@ def add_vertex_to_path(vertex, path):
 def dfs(vertex, adjancency_list, visited, all_cycles, path = []):
   if (visited.get(vertex) is True):
     if (vertex is path[0] and len(path) >= 2):
-      all_cycles.append(add_vertex_to_path(vertex, path))
+      all_cycles.append(copy_path_and_add_vertex(vertex, path))
     return
 
   visited[vertex] = True
-  new_path = add_vertex_to_path(vertex, path)
+  new_path = copy_path_and_add_vertex(vertex, path)
 
   for child in adjancency_list[vertex]:
     dfs(child, adjancency_list, visited, all_cycles, new_path)
