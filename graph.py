@@ -56,10 +56,30 @@ def is_edge_path_in_cycle_list(edge_path, cycle_list):
   is_in_list = False
 
   for edge_set in cycle_list:
+    if len(edge_set) != len(edge_path):
+      continue
+
     set_diff = edge_set.difference(edge_path)
+
     if len(set_diff) == 0:
       is_in_list = True
 
+  return is_in_list
+
+def is_path_in_cycle_list(path, cycle_list):
+  is_in_list = False
+
+  for path_arr in cycle_list:
+    # if (len(path) > 3 and path[0] == 1 and path[1] == 4 and path[2] == 2 and path[3] == 1):
+    #   print(f'path={path}')
+    #   print(f'path_arr={path_arr}')
+
+    if len(path_arr) != len(path):
+      continue
+
+    if sorted(path_arr) == sorted(path):
+      is_in_list = True
+  
   return is_in_list
 
 def search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, size, path = [], edge_path = set()):
@@ -68,31 +88,17 @@ def search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edg
   
   if (visited.get(vertex) is True):
     if len(path) + 1 == size and vertex is path[0]:
-      if not is_edge_path_in_cycle_list(edge_path, all_edge_cycles)
-      
+      new_path = copy_path_and_add_vertex(vertex, path)
+      new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
 
-
-  # if (len(path) + 1 == size or (visited.get(vertex) is True and len(path) + 1 <)) and path[0] != vertex:
-  #   return
-
-  # if (size == 5 and len(path) + 1 == 5):
-  #   print(path)
-  #   print(edge_path)
-
-  # if ((visited.get(vertex) is True)):
-  #   if (len(path) + 1 == size and vertex == path[0]) and (not is_edge_path_in_cycle_list(edge_path, all_edge_cycles)):
-  #     all_cycles.append(copy_path_and_add_vertex(vertex, path))
-  #     all_edge_cycles.append(edge_path)
-  #   return
+      if not is_edge_path_in_cycle_list(new_edge_path, all_edge_cycles) and not is_path_in_cycle_list(new_path, all_cycles):
+        all_cycles.append(new_path)
+        all_edge_cycles.append(new_edge_path)
+    return
   
   visited[vertex] = True
   new_path = copy_path_and_add_vertex(vertex, path)
   new_edge_path = edge_path
-
-  if (len(new_path) == size and vertex == path[0]) and (not is_edge_path_in_cycle_list(edge_path, all_edge_cycles)):
-    all_cycles.append(new_path)
-    all_edge_cycles.append(edge_path)
-    return
 
   if len(new_path) > 1:
     new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
@@ -108,7 +114,6 @@ def find_cycles_by_permutation(graph):
   all_edge_cycles = list()
 
   for length in range(4, len(graph['vertices']) + 1):
-    # print(length)
     for vertex in graph['vertices']:
       visited = dict()
       search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, length)
@@ -137,14 +142,18 @@ def main():
   #   'vertices': list(range(1, 17)),
   #   'edges': ((1,2), (1,11), (1, 15), (2,11), (2,10), (2,3), (3,10), (3,4), (4,5), (5,6), (6,7), (7,8), (8,9), (8,14), (9, 10), (9,13), (11,12), (12, 13), (13,15), (14,16), (15,16))
   # }
+  graph = {
+    'vertices': list(range(1, 14)),
+    'edges': ((1,2), (2,3), (3,4), (3,5), (4,6), (4,7), (5,6), (5,9), (6,10), (7,8), (10,11), (11,12), (11,13), (12,13))
+  }
   # graph = { 
   #   'vertices': list(range(1,9)),
   #   'edges': ((1,2), (2,3), (2,5), (3,4), (4,5), (5,6), (6,7), (6,8), (7,8))
   # }
-  graph = { 
-    'vertices': list(range(1, 7)),
-    'edges': ((1,4), (1,2), (1,5), (2,3), (2,4), (2,5), (3,4), (3,5), (3,6), (4,6), (5,6))
-  }
+  # graph = { 
+  #   'vertices': list(range(1, 7)),
+  #   'edges': ((1,4), (1,2), (1,5), (2,3), (2,4), (2,5), (3,4), (3,5), (3,6), (4,6), (5,6))
+  # }
 
   # set_a == set_b
 
@@ -169,7 +178,8 @@ def main():
   execution_time = time_diff.total_seconds() * 1000
 
   # Todo: Remove duplicate cycles
-  print(cycles)
+  # print(cycles)
+  print(len(cycles))
   print(f'took {execution_time}ms to run find_all_cycles_by_traversal')
 
   start_time = datetime.datetime.now()
@@ -183,7 +193,9 @@ def main():
   execution_time = time_diff.total_seconds() * 1000
 
   # Todo: Remove duplicate cycles
-  print(cycles)
+  # print(cycles)
+  for index, cycle in enumerate(cycles):
+    print(f'Cycle {index + 1}: {cycle}')
   print(f'took {execution_time}ms to run find_all_cycles_by_traversal')
 
 if __name__ == "__main__":
