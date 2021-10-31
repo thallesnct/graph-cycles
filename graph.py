@@ -114,7 +114,7 @@ def find_cycles_by_permutation(graph):
   all_cycles = list()
   all_edge_cycles = list()
 
-  for length in range(4, len(graph['vertices']) + 1):
+  for length in range(4, len(graph['vertices']) + 2):
     for vertex in graph['vertices']:
       visited = dict()
       search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, length)
@@ -143,34 +143,30 @@ def main():
   #   'vertices': list(range(1, 17)),
   #   'edges': ((1,2), (1,11), (1, 15), (2,11), (2,10), (2,3), (3,10), (3,4), (4,5), (5,6), (6,7), (7,8), (8,9), (8,14), (9, 10), (9,13), (11,12), (12, 13), (13,15), (14,16), (15,16))
   # }
-  graph = {
-    'vertices': list(range(1, 14)),
-    'edges': ((1,2), (2,3), (3,4), (3,5), (4,6), (4,7), (5,6), (5,9), (6,10), (7,8), (10,11), (11,12), (11,13), (12,13))
-  }
+  # graph = {
+  #   'vertices': list(range(1, 14)),
+  #   'edges': ((1,2), (2,3), (3,4), (3,5), (4,6), (4,7), (5,6), (5,9), (6,10), (7,8), (10,11), (11,12), (11,13), (12,13))
+  # }
   # graph = { 
   #   'vertices': list(range(1,9)),
   #   'edges': ((1,2), (2,3), (2,5), (3,4), (4,5), (5,6), (6,7), (6,8), (7,8))
   # }
-  # graph = { 
-  #   'vertices': list(range(1, 7)),
-  #   'edges': ((1,4), (1,2), (1,5), (2,3), (2,4), (2,5), (3,4), (3,5), (3,6), (4,6), (5,6))
-  # }
+  graph = { 
+    'vertices': list(range(1, 7)),
+    'edges': ((1,4), (1,2), (1,5), (2,3), (2,4), (2,5), (3,4), (3,5), (3,6), (4,6), (5,6))
+  }
 
   # set_a == set_b
 
   # (2,3,5,2) = set_a {'23', '35', '25'}
   # (3,5,2,3) = set_b {'35', '25', '23'}
 
-  # nomes das arestas = {
-  #   '14': True,
-  #   '12': True,
-  #   '15': True
-  # }
+  # nomes das arestas = string contendo a origem e o destino da aresta ordenados de menor para maior
 
 
   start_time = datetime.datetime.now()
 
-  cycles = find_cycles_by_traversal(graph)
+  traversal_cycles = find_cycles_by_traversal(graph)
 
   end_time = datetime.datetime.now()
 
@@ -178,15 +174,14 @@ def main():
 
   execution_time = time_diff.total_seconds() * 1000
 
-  # Todo: Remove duplicate cycles
-  # print(cycles)
-  for index, cycle in enumerate(cycles):
+  traversal_cycles.sort(key=len)
+  for index, cycle in enumerate(traversal_cycles):
     print(f'Cycle {index + 1}: {cycle}')
   print(f'took {execution_time}ms to run find_all_cycles_by_traversal')
 
   start_time = datetime.datetime.now()
 
-  cycles = find_cycles_by_permutation(graph)
+  permutation_cycles = find_cycles_by_permutation(graph)
 
   end_time = datetime.datetime.now()
 
@@ -194,11 +189,12 @@ def main():
 
   execution_time = time_diff.total_seconds() * 1000
 
-  # Todo: Remove duplicate cycles
-  # print(cycles)
-  for index, cycle in enumerate(cycles):
+  for index, cycle in enumerate(permutation_cycles):
     print(f'Cycle {index + 1}: {cycle}')
   print(f'took {execution_time}ms to run find_all_cycles_by_traversal')
+
+  starting_text = 'Não há' if len(permutation_cycles) == len(traversal_cycles) else 'Há'
+  print(f'{starting_text} divergencias encontradas entre os dois métodos de busca')
 
 if __name__ == "__main__":
    # Runs main if file is executed
