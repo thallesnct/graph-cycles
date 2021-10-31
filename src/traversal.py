@@ -19,6 +19,9 @@ def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = []
     new_visited = visited.copy()
     dfs(child, adjancency_list, new_visited, all_cycles, all_edge_cycles, new_path, new_edge_path)
 
+# O(n+m)
+# n = number of vertices
+# m = number of edges
 def find_cycles_by_traversal(graph):
   adjancency_list = generate_adjancency_list(graph)
 
