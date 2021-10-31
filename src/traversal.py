@@ -8,7 +8,8 @@ def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = []
       validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles)
     return
 
-  visited[vertex] = True
+  new_visited = visited.copy()
+  new_visited[vertex] = True
   new_path = copy_path_and_add_vertex(vertex, path)
   new_edge_path = edge_path
 
@@ -16,7 +17,6 @@ def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = []
     new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
 
   for child in adjancency_list[vertex]:
-    new_visited = visited.copy()
     dfs(child, adjancency_list, new_visited, all_cycles, all_edge_cycles, new_path, new_edge_path)
 
 # O(n+m)

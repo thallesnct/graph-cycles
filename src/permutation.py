@@ -12,8 +12,9 @@ def search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edg
     if len(path) + 1 == size and vertex is path[0]:
       validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles)
     return
-  
-  visited[vertex] = True
+
+  new_visited = visited.copy()
+  new_visited[vertex] = True
   new_path = copy_path_and_add_vertex(vertex, path)
   new_edge_path = edge_path
 
@@ -21,7 +22,6 @@ def search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edg
     new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
 
   for child in adjancency_list[vertex]:
-    new_visited = visited.copy()
     search_cycle_with_size(child, adjancency_list, new_visited, all_cycles, all_edge_cycles, size, new_path, new_edge_path)
 
 # O(n^2)
