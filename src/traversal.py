@@ -4,7 +4,7 @@ from .helpers.validators import validate_and_add_to_lists
 
 def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = [], edge_path = set()):
   if (visited.get(vertex) is True):
-    if (len(path) > 0 and vertex is path[0] and len(path) > 2):
+    if (len(path) > 2 and vertex is path[0]):
       validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles)
     return
 
