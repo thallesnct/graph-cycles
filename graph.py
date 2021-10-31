@@ -20,25 +20,6 @@ def copy_path_and_add_vertex(vertex, path):
 
   return new_path
 
-def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = [], edge_path = set()):
-  if (visited.get(vertex) is True):
-    if (len(path) > 0 and vertex is path[0] and len(path) > 2):
-      if (not is_edge_path_in_cycle_list(edge_path, all_edge_cycles)):
-        all_cycles.append(copy_path_and_add_vertex(vertex, path))
-        all_edge_cycles.append(edge_path)
-    return
-
-  visited[vertex] = True
-  new_path = copy_path_and_add_vertex(vertex, path)
-  new_edge_path = edge_path
-
-  if len(new_path) > 1:
-    new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
-
-  for child in adjancency_list[vertex]:
-    new_visited = visited.copy()
-    dfs(child, adjancency_list, new_visited, all_cycles, all_edge_cycles, new_path, new_edge_path)
-
 def copy_path_and_add_edge_path(vertex_a, vertex_b, path):
   new_path = path
 
@@ -51,20 +32,6 @@ def copy_path_and_add_edge_path(vertex_a, vertex_b, path):
     new_path.add(int(f'{vertex_a}{vertex_b}'))
 
   return new_path
-  
-def is_edge_path_in_cycle_list(edge_path, cycle_list):
-  is_in_list = False
-
-  for edge_set in cycle_list:
-    if len(edge_set) != len(edge_path):
-      continue
-
-    set_diff = edge_set.difference(edge_path)
-
-    if len(set_diff) == 0:
-      is_in_list = True
-
-  return is_in_list
 
 def is_path_in_cycle_list(path, cycle_list):
   is_in_list = False
@@ -82,18 +49,52 @@ def is_path_in_cycle_list(path, cycle_list):
   
   return is_in_list
 
+def is_edge_path_in_cycle_list(edge_path, cycle_list):
+  is_in_list = False
+
+  for edge_set in cycle_list:
+    if len(edge_set) != len(edge_path):
+      continue
+
+    set_diff = edge_set.difference(edge_path)
+
+    if len(set_diff) == 0:
+      is_in_list = True
+
+  return is_in_list
+
+def validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles):
+  new_path = copy_path_and_add_vertex(vertex, path)
+  new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
+
+  if not is_edge_path_in_cycle_list(new_edge_path, all_edge_cycles) and not is_path_in_cycle_list(new_path, all_cycles):
+    all_cycles.append(new_path)
+    all_edge_cycles.append(new_edge_path)
+
+def dfs(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, path = [], edge_path = set()):
+  if (visited.get(vertex) is True):
+    if (len(path) > 0 and vertex is path[0] and len(path) > 2):
+      validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles)
+    return
+
+  visited[vertex] = True
+  new_path = copy_path_and_add_vertex(vertex, path)
+  new_edge_path = edge_path
+
+  if len(new_path) > 1:
+    new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
+
+  for child in adjancency_list[vertex]:
+    new_visited = visited.copy()
+    dfs(child, adjancency_list, new_visited, all_cycles, all_edge_cycles, new_path, new_edge_path)
+
 def search_cycle_with_size(vertex, adjancency_list, visited, all_cycles, all_edge_cycles, size, path = [], edge_path = set()):
   if (len(path) == size):
     return
   
   if (visited.get(vertex) is True):
     if len(path) + 1 == size and vertex is path[0]:
-      new_path = copy_path_and_add_vertex(vertex, path)
-      new_edge_path = copy_path_and_add_edge_path(path[len(path)-1], vertex, edge_path)
-
-      if not is_edge_path_in_cycle_list(new_edge_path, all_edge_cycles) and not is_path_in_cycle_list(new_path, all_cycles):
-        all_cycles.append(new_path)
-        all_edge_cycles.append(new_edge_path)
+      validate_and_add_to_lists(vertex, path, edge_path, all_cycles, all_edge_cycles)
     return
   
   visited[vertex] = True
@@ -179,7 +180,8 @@ def main():
 
   # Todo: Remove duplicate cycles
   # print(cycles)
-  print(len(cycles))
+  for index, cycle in enumerate(cycles):
+    print(f'Cycle {index + 1}: {cycle}')
   print(f'took {execution_time}ms to run find_all_cycles_by_traversal')
 
   start_time = datetime.datetime.now()
