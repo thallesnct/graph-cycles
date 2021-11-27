@@ -17,3 +17,21 @@ def log_cycles(graph, fn, label):
   print(f'took {execution_time}ms to run {label}')
 
   return cycles
+
+def log_paths(fn, label):
+  start_time = datetime.datetime.now()
+
+  paths = fn()
+
+  end_time = datetime.datetime.now()
+
+  time_diff = (end_time - start_time)
+
+  execution_time = time_diff.total_seconds() * 1000
+
+  paths.sort(key=len)
+  for index, path in enumerate(paths):
+    print(f'Path {index + 1}: {path}')
+  print(f'took {execution_time}ms to run {label}')
+
+  return paths
